@@ -1,12 +1,12 @@
-import { GetStaticProps, GetStaticPaths } from "next";
-import { useRouter } from 'next/router';
-import { api } from "../../services/api";
 import { format, parseISO } from 'date-fns';
-import ptBR from 'date-fns/locale';
-import { convertDurationToTimeString } from "../../utils/convertDurationToTimeString";
-import styles from './episode.module.scss';
+import ptBR from 'date-fns/locale/pt-BR';
+import { GetStaticPaths, GetStaticProps } from "next";
 import Image from 'next/image';
 import Link from "next/link";
+import { api } from "../../services/api";
+import { convertDurationToTimeString } from "../../utils/convertDurationToTimeString";
+import styles from './episode.module.scss';
+import { useRouter } from 'next/router';
 
 type Episode = {
   id: string;
@@ -26,6 +26,12 @@ type EpisodeProps = {
 
 
 export default function Episode({ episode }: EpisodeProps) {
+  // const router = useRouter();
+
+  // if (router.isFallback) {
+  //   return <p>Carregando...</p>
+  // }
+
   return (
     <div className={styles.episode}>
       <div className={styles.thumbnailContainer}>
@@ -59,7 +65,13 @@ export default function Episode({ episode }: EpisodeProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [],
+    paths: [
+      {
+        params: {
+          slug: 'a-importancia-da-contribuicao-em-open-source'
+        }
+      }
+    ],
     fallback: 'blocking'
   }
 }
