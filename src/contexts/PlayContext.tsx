@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, useState, ReactNode, useContext } from "react";
 
 type Episode = {
   title: string;
@@ -9,22 +9,22 @@ type Episode = {
 };
 
 type PlayerContextData = {
-  episodeList: Episode[];
+  episodeList: Array<Episode>;
   currentEpisodeIndex: number;
   isPlaying: boolean;
   isLooping: boolean;
   isShuffling: boolean;
   play: (episode: Episode) => void;
+  playList: (list: Episode[], index: number) => void;
+  setPlayingState: (state: boolean) => void;
   togglePlay: () => void;
   toggleLoop: () => void;
   toggleShuffle: () => void;
-  setPlayingState: (state: boolean) => void;
-  playlist: (list: Episode[], index: number) => void;
   playNext: () => void;
   playPrevious: () => void;
   clearPlayerState: () => void;
-  hasPrevious: boolean;
   hasNext: boolean;
+  hasPrevious: boolean;
 };
 
 export const PlayerContext = createContext({} as PlayerContextData);
@@ -48,7 +48,7 @@ export function PlayerContextProvider({
     setIsPlaying(true);
   }
 
-  function playlist(list: Episode[], index: number) {
+  function playList(list: Episode[], index: number) {
     setEpisodeList(list);
     setCurrentEpisodeIndex(index);
     setIsPlaying(true);
@@ -66,6 +66,11 @@ export function PlayerContextProvider({
     setIsShuffling(!isShuffling);
   }
 
+  function clearPlayerState() {
+    setEpisodeList([]);
+    setCurrentEpisodeIndex(0);
+  }
+
   function setPlayingState(state: boolean) {
     setIsPlaying(state);
   }
@@ -78,6 +83,7 @@ export function PlayerContextProvider({
       const nextRandomEpisodeIndex = Math.floor(
         Math.random() * episodeList.length
       );
+
       setCurrentEpisodeIndex(nextRandomEpisodeIndex);
     } else if (hasNext) {
       setCurrentEpisodeIndex(currentEpisodeIndex + 1);
@@ -90,28 +96,23 @@ export function PlayerContextProvider({
     }
   }
 
-  function clearPlayerState() {
-    setEpisodeList([]);
-    setCurrentEpisodeIndex(0);
-  }
-
   return (
     <PlayerContext.Provider
       value={{
         episodeList,
         currentEpisodeIndex,
         play,
-        isPlaying,
-        togglePlay,
-        setPlayingState,
-        playlist,
+        playList,
         playNext,
         playPrevious,
-        hasPrevious,
-        hasNext,
-        toggleLoop,
+        isPlaying,
         isLooping,
         isShuffling,
+        togglePlay,
+        setPlayingState,
+        hasNext,
+        hasPrevious,
+        toggleLoop,
         toggleShuffle,
         clearPlayerState,
       }}
